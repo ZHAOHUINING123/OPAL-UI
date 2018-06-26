@@ -22,7 +22,6 @@ import React, {Component} from 'react';
 import styled from 'styled-components';
 import window from 'global/window';
 import {connect} from 'react-redux';
-import Banner from './components/banner';
 import Announcement from './components/announcement';
 
 import {loadSampleConfigurations} from './actions';
@@ -43,7 +42,6 @@ import {updateVisData, addDataToMap} from 'kepler.gl/actions';
 import Processors from 'kepler.gl/processors';
 /* eslint-enable no-unused-vars */
 
-const bannerHeight = 30;
 
 const GlobalStyleDiv = styled.div`
   font-family: ff-clan-web-pro, 'Helvetica Neue', Helvetica, sans-serif;
@@ -62,7 +60,7 @@ const GlobalStyleDiv = styled.div`
 
 class App extends Component {
   state = {
-    showBanner: false,
+    inTheMap:false,
     width: window.innerWidth,
     height: window.innerHeight
   };
@@ -78,9 +76,10 @@ class App extends Component {
 
   componentDidMount() {
     // delay 2s to show the banner
-    if (!window.localStorage.getItem('kgHideBanner')) {
-      window.setTimeout(this._showBanner, 3000);
-    }
+    // if (!window.localStorage.getItem('kgHideBanner')) {
+    //   window.setTimeout(this._showBanner, 3000);
+    // }
+    console.log('The map finished mount.');
     // load sample data
     // this._loadSampleData();
   }
@@ -94,19 +93,6 @@ class App extends Component {
       width: window.innerWidth,
       height: window.innerHeight
     });
-  };
-
-  _showBanner = () => {
-    this.setState({showBanner: true});
-  };
-
-  _hideBanner = () => {
-    this.setState({showBanner: false});
-  };
-
-  _disableBanner = () => {
-    this._hideBanner();
-    window.localStorage.setItem('kgHideBanner', 'true');
   };
 
   _loadSampleData() {
@@ -168,25 +154,24 @@ class App extends Component {
     );
   }
 
+  // setpInMap(){
+  //   this.setState({
+  //     inTheMap: !this.state.inTheMap
+  //   })
+  // }
+
   render() {
-    const {showBanner, width, height} = this.state;
+    const {inTheMap, width, height} = this.state;
     return (
       <GlobalStyleDiv>
-        <Banner
-          show={this.state.showBanner}
-          height={bannerHeight}
-          onClose={this._hideBanner}
-        >
-          <Announcement onDisable={this._disableBanner}/>
-        </Banner>
         <div
           style={{
             transition: 'margin 1s, height 1s',
             position: 'absolute',
             width: '100%',
-            height: showBanner ? `calc(100% - ${bannerHeight}px)` : '100%',
-            minHeight: `calc(100% - ${bannerHeight}px)`,
-            marginTop: showBanner ? `${bannerHeight}px` : 0
+            height: '100%',
+            minHeight: `100%`,
+            marginTop: 0
           }}
         >
           <KeplerGl
@@ -197,7 +182,7 @@ class App extends Component {
              */
             getState={state => state.demo.keplerGl}
             width={width}
-            height={height - (showBanner ? bannerHeight : 0)}
+            height={height}
           />
 
         </div>
